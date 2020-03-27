@@ -412,37 +412,47 @@ export default compose(
                         index={index}
                         draggableId={`${annotation.data.id}`}
                       >
-                        {provided => (
-                          <div
-                            key={index}
-                            ref={provided.innerRef}
-                            style={{
-                              position: "absolute",
-                              top: `${annotation.geometry.y}%`,
-                              left: `${annotation.geometry.x}%`
-                            }}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <Point
+                        {provided => {
+                          console.log("draggable props", provided);
+                          const style = {
+                            position: "absolute",
+                            top: `${annotation.geometry.y}%`,
+                            left: `${annotation.geometry.x}%`,
+                            ...provided.draggableProps.style
+                          };
+                          return (
+                            <div
                               key={index}
-                              annotation={annotation}
-                              active={this.shouldAnnotationBeActive(
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={style}
+                              // style={{
+                              //   position: "absolute",
+                              //   top: `${annotation.geometry.y}%`,
+                              //   left: `${annotation.geometry.x}%`
+                              // }}
+                            >
+                              <Point
+                                key={index}
+                                annotation={annotation}
+                                active={this.shouldAnnotationBeActive(
+                                  annotation,
+                                  topAnnotationAtMouse
+                                )}
+                              />
+                              {/* {renderHighlight({
+                                index,
+                                key: annotation.data.id,
                                 annotation,
-                                topAnnotationAtMouse
-                              )}
-                            />
-                            {/* {renderHighlight({
-                              index,
-                              key: annotation.data.id,
-                              annotation,
-                              active: this.shouldAnnotationBeActive(
-                                annotation,
-                                topAnnotationAtMouse
-                              )
-                            })} */}
-                          </div>
-                        )}
+                                active: this.shouldAnnotationBeActive(
+                                  annotation,
+                                  topAnnotationAtMouse
+                                )
+                              })} */}
+                            </div>
+                          );
+                        }}
                       </Draggable>
                     ))}
                     {!props.disableSelector &&
