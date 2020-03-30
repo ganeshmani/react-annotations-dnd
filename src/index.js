@@ -1,4 +1,5 @@
-import Annotation from './components/Annotation'
-export { default as defaultProps } from './components/defaultProps'
+import Annotation from "./components/Annotation";
+// import AnnotationHooks from "./components/AnnotationHooks";
+export { default as defaultProps } from "./components/defaultProps";
 
-export default Annotation
+export default Annotation;

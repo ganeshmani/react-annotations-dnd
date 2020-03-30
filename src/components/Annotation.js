@@ -116,6 +116,7 @@ export default compose(
 
       this.state = {
         activeAnnotation: {},
+        Annotations: [],
         draggingAnnotationsCoordinates: {
           x: "",
           y: ""
@@ -156,10 +157,13 @@ export default compose(
           this.removeTargetTouchEventListeners();
         }
       }
+
+      if (this.props.annotations !== prevProps.annotations) {
+        this.setState({ ...this.state, Annotations: this.props.annotations });
+      }
     }
 
     setInnerRef = el => {
-      console.log("elelel", el);
       this.container = el;
       this.props.relativeMousePos.innerRef(el);
       this.props.innerRef(el);
@@ -324,7 +328,7 @@ export default compose(
 
     onDragEnd = result => {
       this.targetRef.current.onClick = undefined;
-      const updatedAnnotations = this.props.annotations.map(annotation => {
+      const updatedAnnotations = this.state.Annotations.map(annotation => {
         if (annotation.data.id == parseFloat(result.draggableId)) {
           annotation.geometry = {
             ...annotation.geometry,
@@ -338,7 +342,8 @@ export default compose(
 
       this.setState({
         ...this.state,
-        draggingAnnotationsCoordinates: { x: "", y: "" }
+        draggingAnnotationsCoordinates: { x: "", y: "" },
+        Annotations: updatedAnnotations
       });
       this.props.onDragEnd(updatedAnnotations);
     };
@@ -407,13 +412,12 @@ export default compose(
                     onMouseMove={this.onTargetMouseMove}
                     onMouseUp={this.onMouseUp}
                   >
-                    {props.annotations.map((annotation, index) => (
+                    {this.state.Annotations.map((annotation, index) => (
                       <Draggable
                         index={index}
                         draggableId={`${annotation.data.id}`}
                       >
                         {provided => {
-                          console.log("draggable props", provided);
                           const style = {
                             position: "absolute",
                             top: `${annotation.geometry.y}%`,
@@ -427,11 +431,6 @@ export default compose(
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               style={style}
-                              // style={{
-                              //   position: "absolute",
-                              //   top: `${annotation.geometry.y}%`,
-                              //   left: `${annotation.geometry.x}%`
-                              // }}
                             >
                               <Point
                                 key={index}
@@ -462,6 +461,7 @@ export default compose(
                         annotation: props.value
                       })}
                   </Items>
+                  {provided.placeholder}
                 </DroppableContainer>
               )}
             </Droppable>
@@ -478,7 +478,7 @@ export default compose(
                 type: props.type,
                 annotation: props.value
               })}
-            {props.annotations.map(
+            {this.state.Annotations.map(
               annotation =>
                 this.shouldAnnotationBeActive(
                   annotation,

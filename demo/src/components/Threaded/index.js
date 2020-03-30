@@ -279,6 +279,7 @@ export default class Threaded extends Component {
   };
 
   onDragEnd = annotations => {
+    console.log("drag end");
     this.setState({
       ...this.state,
       annotations
